@@ -48,7 +48,10 @@ start_date = data.Date.min()
 end_date = data.Date.max()
 max_days = end_date-start_date
 
-selected_date = st.slider('Select Date Range', min_value=start_date, value=end_date ,max_value=end_date, format=format)
+selected_date = st.slider('Select Date Range', min_value=start_date, value=(start_date, end_date) ,max_value=end_date, format=format)
+
+start_date = selected_date[0]
+selected_date = selected_date[1]
 
 st.table(pd.DataFrame([[start_date, selected_date, end_date]],
                 columns=['start',
@@ -65,6 +68,7 @@ filtered_df = data[(data['Date'] >= start_date) & (data['Date'] <= selected_date
 
 # Display the total volume and value sales at the manufacturer level
 manufacturer_sales = filtered_df.groupby('Manufacturer')[['Volume', 'Value']].sum().sort_values(by='Value', ascending=False)
+manufacturer_sales.rename(columns={'Volume': 'Total Volume', 'Value': 'Total Value'}, inplace=True)
 st.dataframe(manufacturer_sales, width=800)
 st.markdown("---")
 
